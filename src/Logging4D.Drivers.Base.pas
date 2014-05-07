@@ -12,12 +12,9 @@ uses
 type
 
   TDriverLogging = class abstract(TInterfacedObject, ILogging)
-  strict private
+  strict protected
     FName: string;
     FAppender: TLoggerAppender;
-  strict protected
-    function GetName(): string;
-    function GetAppender(): TLoggerAppender;
 
     procedure DoConfigure(); virtual; abstract;
     procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); virtual; abstract;
@@ -60,7 +57,7 @@ end;
 
 destructor TDriverLogging.Destroy;
 begin
-
+  FAppender := nil;
   inherited Destroy();
 end;
 
@@ -72,16 +69,6 @@ end;
 procedure TDriverLogging.Fatal(const pLogger: ILogger);
 begin
   Log(TLoggerLevel.Fatal, pLogger);
-end;
-
-function TDriverLogging.GetAppender: TLoggerAppender;
-begin
-  Result := FAppender;
-end;
-
-function TDriverLogging.GetName: string;
-begin
-  Result := FName;
 end;
 
 procedure TDriverLogging.Info(const pLogger: ILogger);

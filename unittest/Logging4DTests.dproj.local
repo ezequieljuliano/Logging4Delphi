@@ -1,13 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2014/05/05 15:13:17.282,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/05 15:13:35.671,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/05 17:39:08.240,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/05 17:41:19.723,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.Drivers.Base.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/06 14:20:16.416,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/06 14:20:27.672,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.Drivers.Standard.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/06 15:46:13.196,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
-    <Transaction>2014/05/06 15:47:42.952,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Logging4D.UnitTest.Standard.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/05 15:13:17.000.282,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/05 15:13:35.000.671,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/05 17:39:08.000.240,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/05 17:41:19.000.723,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.Drivers.Base.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/06 14:20:16.000.416,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/06 14:20:27.000.672,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.Drivers.Standard.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/06 15:46:13.000.196,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/06 15:47:42.000.952,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Logging4D.UnitTest.Standard.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/06 17:13:00.000.126,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/06 17:13:22.000.586,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\src\Logging4D.Drivers.Log4D.pas</Transaction>
+    <Transaction>2014/05/07 10:02:34.816,=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
+    <Transaction>2014/05/07 10:02:48.785,\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Logging4D.UnitTest.Log4D.pas=\\VBOXSVR\d_drive\GitHub\Logging4Delphi\unittest\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

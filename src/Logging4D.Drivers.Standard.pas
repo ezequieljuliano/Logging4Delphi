@@ -17,7 +17,7 @@ type
     procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); override;
   end;
 
-  TStdLoggingSingleton = class sealed
+  TStdLoggingSingleton = class sealed(TDriverLoggingSingleton)
   strict private
     class var FName: string;
     class var FAppender: TLoggerAppender;
@@ -35,7 +35,7 @@ var
 
 procedure TStdLoggingAdapter.DoConfigure;
 begin
-  if (GetAppender = nil) then
+  if not Assigned(FAppender) then
     raise ELoggerAppenderNotFound.Create('Appender not found!');
 end;
 
@@ -65,7 +65,7 @@ begin
 
   vMsg := vMsg + sLineBreak;
 
-  GetAppender.Invoke(vMsg);
+  FAppender(vMsg);
 end;
 
 { TStdLoggingSingleton }
