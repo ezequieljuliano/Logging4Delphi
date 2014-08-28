@@ -1,3 +1,6 @@
 /src/__history
 /unittest/Win32/Debug
 /unittest/__history
+/dependencies/Log4D/__history/*.~1~
+/unittest/*.dsk
+/unittest/*.skincfg

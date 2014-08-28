@@ -1063,7 +1063,7 @@ implementation
 
 {$IFDEF UNICODE}
 uses
-  Consts;
+  Vcl.Consts;
 {$ENDIF UNICODE}
 
 const

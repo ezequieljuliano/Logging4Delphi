@@ -38,11 +38,19 @@ type
     class function Get(): ILogging;
   end;
 
+procedure DefineFileNamePropertyConfigurator(const pPropsFileName: string);
+
 implementation
 
 var
   _vLogging: ILogging = nil;
   _vLog4DLevels: array [TLoggerLevel] of TLogLevel;
+  _vPropsFileName: string = '';
+
+procedure DefineFileNamePropertyConfigurator(const pPropsFileName: string);
+begin
+  _vPropsFileName := pPropsFileName;
+end;
 
 procedure RegisterLog4DLevels();
 begin
@@ -85,13 +93,17 @@ end;
 
 procedure TLog4DLoggingAdapter.DoConfigure;
 const
-  cLog4DFile = 'log4d.props';
+  cDefaultLog4DFile = 'log4d.props';
 var
   vFilePathName: string;
 begin
   DefaultHierarchy.ResetConfiguration;
 
-  vFilePathName := ExtractFilePath(ParamStr(0)) + cLog4DFile;
+  if not _vPropsFileName.IsEmpty then
+    vFilePathName := _vPropsFileName
+  else
+    vFilePathName := ExtractFilePath(ParamStr(0)) + cDefaultLog4DFile;
+
   if FileExists(vFilePathName) then
     TLogPropertyConfigurator.Configure(vFilePathName)
   else
