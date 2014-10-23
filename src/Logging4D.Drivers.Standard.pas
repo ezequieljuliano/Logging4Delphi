@@ -57,7 +57,7 @@ begin
   if (pLogger.GetMessage <> EmptyStr) then
     vMsg := vMsg + ' | Message:' + pLogger.GetMessage;
 
-  if (pLogger.GetMarker.GetName <> EmptyStr) then
+  if (pLogger.GetMarker <> nil) and (pLogger.GetMarker.GetName <> EmptyStr) then
     vMsg := vMsg + ' | Marker:' + pLogger.GetMarker.GetName;
 
   if (pLogger.GetException <> nil) then
