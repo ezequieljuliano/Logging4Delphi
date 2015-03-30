@@ -3,15 +3,11 @@ unit Logging4D;
 interface
 
 uses
-  System.Generics.Collections,
-  System.SysUtils,
-  System.SyncObjs;
+  System.SysUtils;
 
 type
 
   ELoggerException = class(Exception);
-  ELoggerNameNotDefined = class(ELoggerException);
-  ELoggerAppenderNotFound = class(ELoggerException);
 
   TLoggerKeywords = TArray<string>;
   TLoggerAppender = TProc<string>;
@@ -25,6 +21,9 @@ type
 
     procedure SetParent(const pMarker: ILoggerMarker);
     function GetParent(): ILoggerMarker;
+
+    property Name: string read GetName write SetName;
+    property Parent: ILoggerMarker read GetParent write SetParent;
   end;
 
   ILogger = interface
@@ -44,43 +43,59 @@ type
 
   ILogging = interface
     ['{04148C83-66F4-4269-91C2-166CD192DE95}']
-    procedure Fatal(const pLogger: ILogger);
-    procedure Error(const pLogger: ILogger);
-    procedure Warn(const pLogger: ILogger);
-    procedure Info(const pLogger: ILogger);
-    procedure Debug(const pLogger: ILogger);
-    procedure Trace(const pLogger: ILogger);
+    procedure Fatal(const pLogger: ILogger); overload;
+    procedure Fatal(const pLogMsg: string); overload;
 
-    procedure Log(const pLevel: TLoggerLevel; const pLogger: ILogger);
+    procedure Error(const pLogger: ILogger); overload;
+    procedure Error(const pLogMsg: string); overload;
+
+    procedure Warn(const pLogger: ILogger); overload;
+    procedure Warn(const pLogMsg: string); overload;
+
+    procedure Info(const pLogger: ILogger); overload;
+    procedure Info(const pLogMsg: string); overload;
+
+    procedure Debug(const pLogger: ILogger); overload;
+    procedure Debug(const pLogMsg: string); overload;
+
+    procedure Trace(const pLogger: ILogger); overload;
+    procedure Trace(const pLogMsg: string); overload;
+
+    procedure Log(const pLevel: TLoggerLevel; const pLogger: ILogger); overload;
+    procedure Log(const pLevel: TLoggerLevel; const pLogMsg: string); overload;
   end;
 
-function Logger(): ILogger;
-function CriticalSectionLogger(): TCriticalSection;
-function KeywordsToString(const pKeywords: TLoggerKeywords): string;
+  TLoggerUtil = class
+  public
+    class function KeywordsToString(const pKeywords: TLoggerKeywords): string; static;
+  end;
+
+function NewLogger(): ILogger;
 
 implementation
-
-var
-  _vCriticalSection: TCriticalSection;
 
 type
 
   TLoggerMarker = class(TInterfacedObject, ILoggerMarker)
-  strict private
+  private
     FName: string;
     FParent: ILoggerMarker;
   public
     constructor Create(const pName: string; const pParent: ILoggerMarker);
+    destructor Destroy(); override;
 
     procedure SetName(const pName: string);
     function GetName(): string;
 
     procedure SetParent(const pMarker: ILoggerMarker);
     function GetParent(): ILoggerMarker;
+
+    property Name: string read GetName write SetName;
+    property Parent: ILoggerMarker read GetParent write SetParent;
   end;
 
   TLogger = class(TInterfacedObject, ILogger)
-  strict private
+  private
     FKeywords: TLoggerKeywords;
     FOwner: string;
     FMessage: string;
@@ -88,6 +103,7 @@ type
     FMarker: ILoggerMarker;
   public
     constructor Create();
+    destructor Destroy(); override;
 
     function Keywords(const pKeywords: TLoggerKeywords): ILogger;
     function Owner(const pOwner: string): ILogger;
@@ -102,23 +118,9 @@ type
     function GetMarker(): ILoggerMarker;
   end;
 
-function Logger(): ILogger;
+function NewLogger(): ILogger;
 begin
   Result := TLogger.Create();
-end;
-
-function CriticalSectionLogger(): TCriticalSection;
-begin
-  Result := _vCriticalSection;
-end;
-
-function KeywordsToString(const pKeywords: TLoggerKeywords): string;
-var
-  vStr: string;
-begin
-  Result := EmptyStr;
-  for vStr in pKeywords do
-    Result := Result + vStr + ';';
 end;
 
 { TLoggerMarker }
@@ -128,6 +130,12 @@ constructor TLoggerMarker.Create(const pName: string;
 begin
   FName := pName;
   FParent := pParent;
+end;
+
+destructor TLoggerMarker.Destroy;
+begin
+  FParent := nil;
+  inherited Destroy;
 end;
 
 function TLoggerMarker.GetName: string;
@@ -159,6 +167,14 @@ begin
   FMessage := EmptyStr;
   FException := nil;
   FMarker := nil;
+end;
+
+destructor TLogger.Destroy;
+begin
+  FKeywords := nil;
+  FException := nil;
+  FMarker := nil;
+  inherited;
 end;
 
 function TLogger.Exception(const pException: Exception): ILogger;
@@ -216,12 +232,15 @@ begin
   Result := Self;
 end;
 
-initialization
+{ TLoggerUtil }
 
-_vCriticalSection := TCriticalSection.Create();
-
-finalization
-
-FreeAndNil(_vCriticalSection);
+class function TLoggerUtil.KeywordsToString(const pKeywords: TLoggerKeywords): string;
+var
+  vStr: string;
+begin
+  Result := EmptyStr;
+  for vStr in pKeywords do
+    Result := Result + vStr + ';';
+end;
 
 end.

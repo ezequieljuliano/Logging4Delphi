@@ -61,8 +61,7 @@ begin
     vStrList.Free;
   end;
 
-  TLog4DLoggingSingleton.Configure('Log4D', nil);
-  FLog4DLogging := TLog4DLoggingSingleton.Get();
+  FLog4DLogging := TLog4DLoggingAdapter.Create('Log4D', vLog4DFilePathPropsName);
 end;
 
 procedure TTestLogging4DLog4D.TearDown;
@@ -82,7 +81,7 @@ begin
     DeleteFile(vLogFilePathName);
 
   FLog4DLogging.Fatal(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test1'))
     .Owner('Ezequiel1')
     .Message('Fatal Test')
@@ -90,7 +89,7 @@ begin
     );
 
   FLog4DLogging.Error(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test2'))
     .Owner('Ezequiel2')
     .Message('Error Test')
@@ -98,7 +97,7 @@ begin
     );
 
   FLog4DLogging.Warn(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test3'))
     .Owner('Ezequiel3')
     .Message('Warn Test')
@@ -106,7 +105,7 @@ begin
     );
 
   FLog4DLogging.Info(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test4'))
     .Owner('Ezequiel4')
     .Message('Info Test')
@@ -114,7 +113,7 @@ begin
     );
 
   FLog4DLogging.Debug(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test5'))
     .Owner('Ezequiel5')
     .Message('Debug Test')
@@ -122,7 +121,7 @@ begin
     );
 
   FLog4DLogging.Trace(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test6'))
     .Owner('Ezequiel6')
     .Message('Trace Test')
@@ -131,7 +130,7 @@ begin
 
   vEx := Exception.Create('Ex');
   FLog4DLogging.Trace(
-    Logger
+    NewLogger
     .Keywords(TLoggerKeywords.Create('Test6'))
     .Owner('Ezequiel6')
     .Message('Trace Test')

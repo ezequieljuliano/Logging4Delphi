@@ -3,51 +3,45 @@ unit Logging4D.Drivers.Base;
 interface
 
 uses
-  System.Generics.Collections,
   System.Classes,
   System.SysUtils,
-  System.SyncObjs,
   Logging4D;
 
 type
 
   TDriverLogging = class abstract(TInterfacedObject, ILogging)
   strict protected
-    FName: string;
-    FAppender: TLoggerAppender;
-
-    procedure DoConfigure(); virtual; abstract;
     procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); virtual; abstract;
   public
-    constructor Create(const pName: string; pAppender: TLoggerAppender = nil);
-    destructor Destroy; override;
+    procedure Fatal(const pLogger: ILogger); overload;
+    procedure Fatal(const pLogMsg: string); overload;
 
-    procedure Fatal(const pLogger: ILogger);
-    procedure Error(const pLogger: ILogger);
-    procedure Warn(const pLogger: ILogger);
-    procedure Info(const pLogger: ILogger);
-    procedure Debug(const pLogger: ILogger);
-    procedure Trace(const pLogger: ILogger);
+    procedure Error(const pLogger: ILogger); overload;
+    procedure Error(const pLogMsg: string); overload;
 
-    procedure Log(const pLevel: TLoggerLevel; const pLogger: ILogger);
+    procedure Warn(const pLogger: ILogger); overload;
+    procedure Warn(const pLogMsg: string); overload;
+
+    procedure Info(const pLogger: ILogger); overload;
+    procedure Info(const pLogMsg: string); overload;
+
+    procedure Debug(const pLogger: ILogger); overload;
+    procedure Debug(const pLogMsg: string); overload;
+
+    procedure Trace(const pLogger: ILogger); overload;
+    procedure Trace(const pLogMsg: string); overload;
+
+    procedure Log(const pLevel: TLoggerLevel; const pLogger: ILogger); overload;
+    procedure Log(const pLevel: TLoggerLevel; const pLogMsg: string); overload;
   end;
-
-  TDriverLoggingSingleton = class abstract;
 
 implementation
 
 { TDriverLogging }
 
-constructor TDriverLogging.Create(const pName: string; pAppender: TLoggerAppender);
+procedure TDriverLogging.Debug(const pLogMsg: string);
 begin
-  FName := Trim(pName);
-
-  if (FName = EmptyStr) then
-    raise ELoggerNameNotDefined.Create('Logging name not defined!');
-
-  FAppender := pAppender;
-
-  DoConfigure();
+  Debug(NewLogger.Message(pLogMsg));
 end;
 
 procedure TDriverLogging.Debug(const pLogger: ILogger);
@@ -55,10 +49,9 @@ begin
   Log(TLoggerLevel.Debug, pLogger);
 end;
 
-destructor TDriverLogging.Destroy;
+procedure TDriverLogging.Error(const pLogMsg: string);
 begin
-  FAppender := nil;
-  inherited Destroy();
+  Error(NewLogger.Message(pLogMsg));
 end;
 
 procedure TDriverLogging.Error(const pLogger: ILogger);
@@ -66,9 +59,19 @@ begin
   Log(TLoggerLevel.Error, pLogger);
 end;
 
+procedure TDriverLogging.Fatal(const pLogMsg: string);
+begin
+  Fatal(NewLogger.Message(pLogMsg));
+end;
+
 procedure TDriverLogging.Fatal(const pLogger: ILogger);
 begin
   Log(TLoggerLevel.Fatal, pLogger);
+end;
+
+procedure TDriverLogging.Info(const pLogMsg: string);
+begin
+  Info(NewLogger.Message(pLogMsg));
 end;
 
 procedure TDriverLogging.Info(const pLogger: ILogger);
@@ -76,15 +79,19 @@ begin
   Log(TLoggerLevel.Info, pLogger);
 end;
 
-procedure TDriverLogging.Log(const pLevel: TLoggerLevel;
-  const pLogger: ILogger);
+procedure TDriverLogging.Log(const pLevel: TLoggerLevel; const pLogger: ILogger);
 begin
-  CriticalSectionLogger.Enter;
-  try
-    DoLog(pLevel, pLogger);
-  finally
-    CriticalSectionLogger.Leave;
-  end;
+  DoLog(pLevel, pLogger);
+end;
+
+procedure TDriverLogging.Log(const pLevel: TLoggerLevel; const pLogMsg: string);
+begin
+  DoLog(pLevel, NewLogger.Message(pLogMsg));
+end;
+
+procedure TDriverLogging.Trace(const pLogMsg: string);
+begin
+  Trace(NewLogger.Message(pLogMsg));
 end;
 
 procedure TDriverLogging.Trace(const pLogger: ILogger);
@@ -95,6 +102,11 @@ end;
 procedure TDriverLogging.Warn(const pLogger: ILogger);
 begin
   Log(TLoggerLevel.Warn, pLogger);
+end;
+
+procedure TDriverLogging.Warn(const pLogMsg: string);
+begin
+  Warn(NewLogger.Message(pLogMsg));
 end;
 
 end.

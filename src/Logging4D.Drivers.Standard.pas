@@ -5,51 +5,42 @@ interface
 uses
   System.SysUtils,
   System.TypInfo,
-  System.SyncObjs,
   Logging4D,
   Logging4D.Drivers.Base;
 
 type
 
   TStdLoggingAdapter = class(TDriverLogging, ILogging)
-  strict protected
-    procedure DoConfigure(); override;
-    procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); override;
-  end;
-
-  TStdLoggingSingleton = class sealed(TDriverLoggingSingleton)
   strict private
-    class var FName: string;
-    class var FAppender: TLoggerAppender;
+    FAppender: TLoggerAppender;
+  strict protected
+    procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); override;
   public
-    class procedure Configure(const pName: string; pAppender: TLoggerAppender);
-    class function Get(): ILogging;
+    constructor Create(const pAppender: TLoggerAppender);
   end;
 
 implementation
 
-var
-  _vLogging: ILogging = nil;
+{ TStdLoggingAdapter }
 
-  { TStdLoggingAdapter }
-
-procedure TStdLoggingAdapter.DoConfigure;
+constructor TStdLoggingAdapter.Create(const pAppender: TLoggerAppender);
 begin
-  if not Assigned(FAppender) then
-    raise ELoggerAppenderNotFound.Create('Appender not found!');
+  if not Assigned(pAppender) then
+    raise ELoggerException.Create('Log Appender Undefined!');
+  FAppender := pAppender;
 end;
 
-procedure TStdLoggingAdapter.DoLog(const pLevel: TLoggerLevel;
-  const pLogger: ILogger);
+procedure TStdLoggingAdapter.DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger);
 var
   vMsg: string;
   vKeywords: string;
 begin
+  inherited;
   vMsg := 'Level:' + GetEnumName(TypeInfo(TLoggerLevel), Integer(pLevel));
 
-  vKeywords := KeywordsToString(pLogger.GetKeywords);
+  vKeywords := TLoggerUtil.KeywordsToString(pLogger.GetKeywords);
   if (vKeywords <> EmptyStr) then
-    vMsg := vMsg + ' | Keywords:' + KeywordsToString(pLogger.GetKeywords);
+    vMsg := vMsg + ' | Keywords:' + vKeywords;
 
   if (pLogger.GetOwner <> EmptyStr) then
     vMsg := vMsg + ' | Owner:' + pLogger.GetOwner;
@@ -66,40 +57,6 @@ begin
   vMsg := vMsg + sLineBreak;
 
   FAppender(vMsg);
-end;
-
-{ TStdLoggingSingleton }
-
-class procedure TStdLoggingSingleton.Configure(const pName: string; pAppender: TLoggerAppender);
-begin
-  if (pName = EmptyStr) then
-    raise ELoggerNameNotDefined.Create('Logging name not defined!');
-
-  TStdLoggingSingleton.FName := Trim(pName);
-
-  if not Assigned(pAppender) then
-    raise ELoggerAppenderNotFound.Create('Appender not found!');
-
-  TStdLoggingSingleton.FAppender := pAppender;
-end;
-
-class function TStdLoggingSingleton.Get: ILogging;
-begin
-  if (_vLogging = nil) then
-  begin
-    if (TStdLoggingSingleton.FName <> EmptyStr) and (Assigned(TStdLoggingSingleton.FAppender)) then
-    begin
-      CriticalSectionLogger.Enter;
-      try
-        _vLogging := TStdLoggingAdapter.Create(TStdLoggingSingleton.FName, TStdLoggingSingleton.FAppender);
-      finally
-        CriticalSectionLogger.Leave;
-      end;
-    end
-    else
-      raise ELoggerException.Create('Settings not set call the Configure method!!');
-  end;
-  Result := _vLogging;
 end;
 
 end.

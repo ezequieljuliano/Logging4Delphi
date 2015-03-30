@@ -6,7 +6,6 @@ uses
   Log4D,
   Logging4D,
   Logging4D.Drivers.Base,
-  System.SyncObjs,
   System.SysUtils;
 
 type
@@ -24,33 +23,16 @@ type
   TLog4DLoggingAdapter = class(TDriverLogging, ILogging)
   strict private
     FLogLogger: TLogLogger;
-  strict protected
-    procedure DoConfigure(); override;
+  protected
     procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); override;
-  end;
-
-  TLog4DLoggingSingleton = class sealed(TDriverLoggingSingleton)
-  strict private
-    class var FName: string;
-    class var FAppender: TLoggerAppender;
   public
-    class procedure Configure(const pName: string; pAppender: TLoggerAppender);
-    class function Get(): ILogging;
+    constructor Create(const pIdentifier, pConfigFileName: string; const pAppender: TLoggerAppender = nil);
   end;
-
-procedure DefineFileNamePropertyConfigurator(const pPropsFileName: string);
 
 implementation
 
 var
-  _vLogging: ILogging = nil;
   _vLog4DLevels: array [TLoggerLevel] of TLogLevel;
-  _vPropsFileName: string = '';
-
-procedure DefineFileNamePropertyConfigurator(const pPropsFileName: string);
-begin
-  _vPropsFileName := pPropsFileName;
-end;
 
 procedure RegisterLog4DLevels();
 begin
@@ -91,44 +73,36 @@ end;
 
 { TLog4DLoggingAdapter }
 
-procedure TLog4DLoggingAdapter.DoConfigure;
-const
-  cDefaultLog4DFile = 'log4d.props';
-var
-  vFilePathName: string;
+constructor TLog4DLoggingAdapter.Create(const pIdentifier, pConfigFileName: string;
+  const pAppender: TLoggerAppender);
 begin
+  if pIdentifier.IsEmpty then
+    raise ELoggerException.Create('Log Identifier Undefined!');
+
+  if pConfigFileName.IsEmpty then
+    raise ELoggerException.Create('Log Configuration File Name Undefined!');
+
   DefaultHierarchy.ResetConfiguration;
 
-  if not _vPropsFileName.IsEmpty then
-    vFilePathName := _vPropsFileName
-  else
-    vFilePathName := ExtractFilePath(ParamStr(0)) + cDefaultLog4DFile;
+  TLogPropertyConfigurator.Configure(pConfigFileName);
 
-  if FileExists(vFilePathName) then
-    TLogPropertyConfigurator.Configure(vFilePathName)
-  else
-  begin
-    TLogBasicConfigurator.Configure();
-    TLogLogger.GetRootLogger.Level := LoggerLevelToLog4DLevel(TLoggerLevel.All);
-  end;
+  FLogLogger := TLogLogger.GetLogger(pIdentifier);
 
-  FLogLogger := TLogLogger.GetLogger(FName);
-
-  if Assigned(FAppender) then
-    FLogLogger.AddAppender(TLog4DAnonymousAppender.Create(FAppender));
+  if Assigned(pAppender) then
+    FLogLogger.AddAppender(TLog4DAnonymousAppender.Create(pAppender));
 end;
 
-procedure TLog4DLoggingAdapter.DoLog(const pLevel: TLoggerLevel;
-  const pLogger: ILogger);
+procedure TLog4DLoggingAdapter.DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger);
 var
   vMsg: string;
   vKeywords: string;
 begin
+  inherited;
   vMsg := 'Log';
 
-  vKeywords := KeywordsToString(pLogger.GetKeywords);
+  vKeywords := TLoggerUtil.KeywordsToString(pLogger.GetKeywords);
   if (vKeywords <> EmptyStr) then
-    vMsg := vMsg + ' | Keywords:' + KeywordsToString(pLogger.GetKeywords);
+    vMsg := vMsg + ' | Keywords:' + vKeywords;
 
   if (pLogger.GetOwner <> EmptyStr) then
     vMsg := vMsg + ' | Owner:' + pLogger.GetOwner;
@@ -143,37 +117,6 @@ begin
     vMsg := vMsg + ' | Exception:' + pLogger.GetException.ToString;
 
   FLogLogger.Log(LoggerLevelToLog4DLevel(pLevel), vMsg, pLogger.GetException);
-end;
-
-{ TLog4DLoggingSingleton }
-
-class procedure TLog4DLoggingSingleton.Configure(const pName: string;
-  pAppender: TLoggerAppender);
-begin
-  if (pName = EmptyStr) then
-    raise ELoggerNameNotDefined.Create('Logging name not defined!');
-
-  TLog4DLoggingSingleton.FName := Trim(pName);
-  TLog4DLoggingSingleton.FAppender := pAppender;
-end;
-
-class function TLog4DLoggingSingleton.Get: ILogging;
-begin
-  if (_vLogging = nil) then
-  begin
-    if (TLog4DLoggingSingleton.FName <> EmptyStr) then
-    begin
-      CriticalSectionLogger.Enter;
-      try
-        _vLogging := TLog4DLoggingAdapter.Create(TLog4DLoggingSingleton.FName, TLog4DLoggingSingleton.FAppender);
-      finally
-        CriticalSectionLogger.Leave;
-      end;
-    end
-    else
-      raise ELoggerException.Create('Settings not set call the Configure method!!');
-  end;
-  Result := _vLogging;
 end;
 
 initialization

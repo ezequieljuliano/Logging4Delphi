@@ -50,8 +50,7 @@ begin
       end;
     end;
 
-  TStdLoggingSingleton.Configure('Std', FAppender);
-  FStdLogging := TStdLoggingSingleton.Get();
+  FStdLogging := TStdLoggingAdapter.Create(FAppender);
 end;
 
 procedure TTestLogging4DStd.TearDown;
@@ -76,7 +75,7 @@ begin
   vStrList := TStringList.Create;
   try
     FStdLogging.Fatal(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test1'))
       .Owner('Ezequiel1')
       .Message('Fatal Test')
@@ -86,7 +85,7 @@ begin
     CheckEqualsString(cFatal, vStrList[0]);
 
     FStdLogging.Error(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test2'))
       .Owner('Ezequiel2')
       .Message('Error Test')
@@ -96,7 +95,7 @@ begin
     CheckEqualsString(cError, vStrList[0]);
 
     FStdLogging.Warn(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test3'))
       .Owner('Ezequiel3')
       .Message('Warn Test')
@@ -106,7 +105,7 @@ begin
     CheckEqualsString(cWarn, vStrList[0]);
 
     FStdLogging.Info(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test4'))
       .Owner('Ezequiel4')
       .Message('Info Test')
@@ -116,7 +115,7 @@ begin
     CheckEqualsString(cInfo, vStrList[0]);
 
     FStdLogging.Debug(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test5'))
       .Owner('Ezequiel5')
       .Message('Debug Test')
@@ -126,7 +125,7 @@ begin
     CheckEqualsString(cDebug, vStrList[0]);
 
     FStdLogging.Trace(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test6'))
       .Owner('Ezequiel6')
       .Message('Trace Test')
@@ -137,7 +136,7 @@ begin
 
     vEx := Exception.Create('Ex');
     FStdLogging.Trace(
-      Logger
+      NewLogger
       .Keywords(TLoggerKeywords.Create('Test6'))
       .Owner('Ezequiel6')
       .Message('Trace Test')
