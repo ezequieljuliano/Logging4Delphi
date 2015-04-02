@@ -50,7 +50,7 @@ begin
       end;
     end;
 
-  FStdLogging := TStdLoggingAdapter.Create(FAppender);
+  FStdLogging := TStdLoggingFactory.Build(FAppender);
 end;
 
 procedure TTestLogging4DStd.TearDown;

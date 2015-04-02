@@ -61,7 +61,7 @@ begin
     vStrList.Free;
   end;
 
-  FLog4DLogging := TLog4DLoggingAdapter.Create('Log4D', vLog4DFilePathPropsName);
+  FLog4DLogging := TLog4DLoggingFactory.Build('Log4D', vLog4DFilePathPropsName);
 end;
 
 procedure TTestLogging4DLog4D.TearDown;

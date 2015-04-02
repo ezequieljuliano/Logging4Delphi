@@ -3,10 +3,24 @@ unit Logging4D.Drivers.Log4D;
 interface
 
 uses
+  Logging4D;
+
+type
+
+  TLog4DLoggingFactory = class sealed
+  public
+    class function Build(const pIdentifier, pConfigFileName: string; const pAppender: TLoggerAppender = nil): ILogging; static;
+  end;
+
+implementation
+
+uses
+  System.SysUtils,
   Log4D,
-  Logging4D,
-  Logging4D.Drivers.Base,
-  System.SysUtils;
+  Logging4D.Drivers.Base;
+
+var
+  _vLog4DLevels: array [TLoggerLevel] of TLogLevel;
 
 type
 
@@ -28,11 +42,6 @@ type
   public
     constructor Create(const pIdentifier, pConfigFileName: string; const pAppender: TLoggerAppender = nil);
   end;
-
-implementation
-
-var
-  _vLog4DLevels: array [TLoggerLevel] of TLogLevel;
 
 procedure RegisterLog4DLevels();
 begin
@@ -117,6 +126,14 @@ begin
     vMsg := vMsg + ' | Exception:' + pLogger.GetException.ToString;
 
   FLogLogger.Log(LoggerLevelToLog4DLevel(pLevel), vMsg, pLogger.GetException);
+end;
+
+{ TLog4DLoggingFactory }
+
+class function TLog4DLoggingFactory.Build(const pIdentifier, pConfigFileName: string;
+  const pAppender: TLoggerAppender): ILogging;
+begin
+  Result := TLog4DLoggingAdapter.Create(pIdentifier, pConfigFileName, pAppender);
 end;
 
 initialization

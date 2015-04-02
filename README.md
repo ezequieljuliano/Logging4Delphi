@@ -49,7 +49,7 @@ Examples
            end;
          end;
     
-       vStdLogging := TStdLoggingAdapter.Create(vStdAppender);
+       vStdLogging := TStdLoggingFactory.Build(vStdAppender);
        //Using Logger
        vStdLogging.Fatal(NewLogger
           .Keywords(TLoggerKeywords.Create('Test'))
@@ -64,7 +64,7 @@ Examples
     var
        vLogging: ILogging;
     begin
-       vLogging := TLog4DLoggingAdapter.Create('Log4D', 'log4d.props');
+       vLogging := TLog4DLoggingFactory.Build('Log4D', 'log4d.props');
        //Using Logger
        vLogging.Fatal(NewLogger
           .Keywords(TLoggerKeywords.Create('Test'))

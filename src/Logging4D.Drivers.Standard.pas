@@ -3,9 +3,20 @@ unit Logging4D.Drivers.Standard;
 interface
 
 uses
+  Logging4D;
+
+type
+
+  TStdLoggingFactory = class sealed
+  public
+    class function Build(const pAppender: TLoggerAppender): ILogging; static;
+  end;
+
+implementation
+
+uses
   System.SysUtils,
   System.TypInfo,
-  Logging4D,
   Logging4D.Drivers.Base;
 
 type
@@ -18,8 +29,6 @@ type
   public
     constructor Create(const pAppender: TLoggerAppender);
   end;
-
-implementation
 
 { TStdLoggingAdapter }
 
@@ -57,6 +66,13 @@ begin
   vMsg := vMsg + sLineBreak;
 
   FAppender(vMsg);
+end;
+
+{ TStdLoggingFactory }
+
+class function TStdLoggingFactory.Build(const pAppender: TLoggerAppender): ILogging;
+begin
+  Result := TStdLoggingAdapter.Create(pAppender);
 end;
 
 end.
