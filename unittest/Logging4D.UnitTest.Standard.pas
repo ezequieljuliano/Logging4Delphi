@@ -8,7 +8,7 @@ uses
   System.SysUtils,
   System.TypInfo,
   Logging4D,
-  Logging4D.Drivers.Standard;
+  Logging4D.Driver.Standard;
 
 type
 

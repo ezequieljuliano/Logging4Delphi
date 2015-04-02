@@ -89,10 +89,10 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="..\src\Logging4D.pas"/>
-        <DCCReference Include="..\src\Logging4D.Drivers.Base.pas"/>
-        <DCCReference Include="..\src\Logging4D.Drivers.Standard.pas"/>
+        <DCCReference Include="..\src\Logging4D.Driver.Base.pas"/>
+        <DCCReference Include="..\src\Logging4D.Driver.Standard.pas"/>
         <DCCReference Include="Logging4D.UnitTest.Standard.pas"/>
-        <DCCReference Include="..\src\Logging4D.Drivers.Log4D.pas"/>
+        <DCCReference Include="..\src\Logging4D.Driver.Log4D.pas"/>
         <DCCReference Include="Logging4D.UnitTest.Log4D.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

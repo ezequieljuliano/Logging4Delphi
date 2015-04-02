@@ -1,4 +1,4 @@
-unit Logging4D.Drivers.Standard;
+unit Logging4D.Driver.Standard;
 
 interface
 
@@ -17,7 +17,7 @@ implementation
 uses
   System.SysUtils,
   System.TypInfo,
-  Logging4D.Drivers.Base;
+  Logging4D.Driver.Base;
 
 type
 

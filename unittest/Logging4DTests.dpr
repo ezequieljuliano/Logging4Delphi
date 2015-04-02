@@ -19,10 +19,10 @@ program Logging4DTests;
 uses
   DUnitTestRunner,
   Logging4D in '..\src\Logging4D.pas',
-  Logging4D.Drivers.Base in '..\src\Logging4D.Drivers.Base.pas',
-  Logging4D.Drivers.Standard in '..\src\Logging4D.Drivers.Standard.pas',
+  Logging4D.Driver.Base in '..\src\Logging4D.Driver.Base.pas',
+  Logging4D.Driver.Standard in '..\src\Logging4D.Driver.Standard.pas',
   Logging4D.UnitTest.Standard in 'Logging4D.UnitTest.Standard.pas',
-  Logging4D.Drivers.Log4D in '..\src\Logging4D.Drivers.Log4D.pas',
+  Logging4D.Driver.Log4D in '..\src\Logging4D.Driver.Log4D.pas',
   Logging4D.UnitTest.Log4D in 'Logging4D.UnitTest.Log4D.pas';
 
 {$R *.RES}

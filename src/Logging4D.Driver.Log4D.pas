@@ -1,4 +1,4 @@
-unit Logging4D.Drivers.Log4D;
+unit Logging4D.Driver.Log4D;
 
 interface
 
@@ -17,7 +17,7 @@ implementation
 uses
   System.SysUtils,
   Log4D,
-  Logging4D.Drivers.Base;
+  Logging4D.Driver.Base;
 
 var
   _vLog4DLevels: array [TLoggerLevel] of TLogLevel;
