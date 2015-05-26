@@ -11,27 +11,27 @@ type
 
   TDriverLogging = class abstract(TInterfacedObject, ILogging)
   strict protected
-    procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); virtual; abstract;
+    procedure DoLog(const pLevel: TLoggerLevel; pLogger: ILogger); virtual; abstract;
   public
-    procedure Fatal(const pLogger: ILogger); overload;
+    procedure Fatal(pLogger: ILogger); overload;
     procedure Fatal(const pLogMsg: string); overload;
 
-    procedure Error(const pLogger: ILogger); overload;
+    procedure Error(pLogger: ILogger); overload;
     procedure Error(const pLogMsg: string); overload;
 
-    procedure Warn(const pLogger: ILogger); overload;
+    procedure Warn(pLogger: ILogger); overload;
     procedure Warn(const pLogMsg: string); overload;
 
-    procedure Info(const pLogger: ILogger); overload;
+    procedure Info(pLogger: ILogger); overload;
     procedure Info(const pLogMsg: string); overload;
 
-    procedure Debug(const pLogger: ILogger); overload;
+    procedure Debug(pLogger: ILogger); overload;
     procedure Debug(const pLogMsg: string); overload;
 
-    procedure Trace(const pLogger: ILogger); overload;
+    procedure Trace(pLogger: ILogger); overload;
     procedure Trace(const pLogMsg: string); overload;
 
-    procedure Log(const pLevel: TLoggerLevel; const pLogger: ILogger); overload;
+    procedure Log(const pLevel: TLoggerLevel; pLogger: ILogger); overload;
     procedure Log(const pLevel: TLoggerLevel; const pLogMsg: string); overload;
   end;
 
@@ -44,7 +44,7 @@ begin
   Debug(NewLogger.Message(pLogMsg));
 end;
 
-procedure TDriverLogging.Debug(const pLogger: ILogger);
+procedure TDriverLogging.Debug(pLogger: ILogger);
 begin
   Log(TLoggerLevel.Debug, pLogger);
 end;
@@ -54,7 +54,7 @@ begin
   Error(NewLogger.Message(pLogMsg));
 end;
 
-procedure TDriverLogging.Error(const pLogger: ILogger);
+procedure TDriverLogging.Error(pLogger: ILogger);
 begin
   Log(TLoggerLevel.Error, pLogger);
 end;
@@ -64,7 +64,7 @@ begin
   Fatal(NewLogger.Message(pLogMsg));
 end;
 
-procedure TDriverLogging.Fatal(const pLogger: ILogger);
+procedure TDriverLogging.Fatal(pLogger: ILogger);
 begin
   Log(TLoggerLevel.Fatal, pLogger);
 end;
@@ -74,12 +74,12 @@ begin
   Info(NewLogger.Message(pLogMsg));
 end;
 
-procedure TDriverLogging.Info(const pLogger: ILogger);
+procedure TDriverLogging.Info(pLogger: ILogger);
 begin
   Log(TLoggerLevel.Info, pLogger);
 end;
 
-procedure TDriverLogging.Log(const pLevel: TLoggerLevel; const pLogger: ILogger);
+procedure TDriverLogging.Log(const pLevel: TLoggerLevel; pLogger: ILogger);
 begin
   DoLog(pLevel, pLogger);
 end;
@@ -94,12 +94,12 @@ begin
   Trace(NewLogger.Message(pLogMsg));
 end;
 
-procedure TDriverLogging.Trace(const pLogger: ILogger);
+procedure TDriverLogging.Trace(pLogger: ILogger);
 begin
   Log(TLoggerLevel.Trace, pLogger);
 end;
 
-procedure TDriverLogging.Warn(const pLogger: ILogger);
+procedure TDriverLogging.Warn(pLogger: ILogger);
 begin
   Log(TLoggerLevel.Warn, pLogger);
 end;

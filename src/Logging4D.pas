@@ -19,7 +19,7 @@ type
     procedure SetName(const pName: string);
     function GetName(): string;
 
-    procedure SetParent(const pMarker: ILoggerMarker);
+    procedure SetParent(pMarker: ILoggerMarker);
     function GetParent(): ILoggerMarker;
 
     property Name: string read GetName write SetName;
@@ -31,7 +31,7 @@ type
     function Keywords(const pKeywords: TLoggerKeywords): ILogger;
     function Owner(const pOwner: string): ILogger;
     function Message(const pMessage: string): ILogger;
-    function Exception(const pException: Exception): ILogger;
+    function Exception(pException: Exception): ILogger;
     function Marker(const pName: string; pParent: ILoggerMarker = nil): ILogger;
 
     function GetKeywords(): TLoggerKeywords;
@@ -43,25 +43,25 @@ type
 
   ILogging = interface
     ['{04148C83-66F4-4269-91C2-166CD192DE95}']
-    procedure Fatal(const pLogger: ILogger); overload;
+    procedure Fatal(pLogger: ILogger); overload;
     procedure Fatal(const pLogMsg: string); overload;
 
-    procedure Error(const pLogger: ILogger); overload;
+    procedure Error(pLogger: ILogger); overload;
     procedure Error(const pLogMsg: string); overload;
 
-    procedure Warn(const pLogger: ILogger); overload;
+    procedure Warn(pLogger: ILogger); overload;
     procedure Warn(const pLogMsg: string); overload;
 
-    procedure Info(const pLogger: ILogger); overload;
+    procedure Info(pLogger: ILogger); overload;
     procedure Info(const pLogMsg: string); overload;
 
-    procedure Debug(const pLogger: ILogger); overload;
+    procedure Debug(pLogger: ILogger); overload;
     procedure Debug(const pLogMsg: string); overload;
 
-    procedure Trace(const pLogger: ILogger); overload;
+    procedure Trace(pLogger: ILogger); overload;
     procedure Trace(const pLogMsg: string); overload;
 
-    procedure Log(const pLevel: TLoggerLevel; const pLogger: ILogger); overload;
+    procedure Log(const pLevel: TLoggerLevel; pLogger: ILogger); overload;
     procedure Log(const pLevel: TLoggerLevel; const pLogMsg: string); overload;
   end;
 
@@ -81,13 +81,13 @@ type
     FName: string;
     FParent: ILoggerMarker;
   public
-    constructor Create(const pName: string; const pParent: ILoggerMarker);
+    constructor Create(const pName: string; pParent: ILoggerMarker);
     destructor Destroy(); override;
 
     procedure SetName(const pName: string);
     function GetName(): string;
 
-    procedure SetParent(const pMarker: ILoggerMarker);
+    procedure SetParent(pMarker: ILoggerMarker);
     function GetParent(): ILoggerMarker;
 
     property Name: string read GetName write SetName;
@@ -108,7 +108,7 @@ type
     function Keywords(const pKeywords: TLoggerKeywords): ILogger;
     function Owner(const pOwner: string): ILogger;
     function Message(const pMessage: string): ILogger;
-    function Exception(const pException: Exception): ILogger;
+    function Exception(pException: Exception): ILogger;
     function Marker(const pName: string; pParent: ILoggerMarker = nil): ILogger;
 
     function GetKeywords(): TLoggerKeywords;
@@ -126,7 +126,7 @@ end;
 { TLoggerMarker }
 
 constructor TLoggerMarker.Create(const pName: string;
-  const pParent: ILoggerMarker);
+  pParent: ILoggerMarker);
 begin
   FName := pName;
   FParent := pParent;
@@ -153,7 +153,7 @@ begin
   FName := pName;
 end;
 
-procedure TLoggerMarker.SetParent(const pMarker: ILoggerMarker);
+procedure TLoggerMarker.SetParent(pMarker: ILoggerMarker);
 begin
   FParent := pMarker;
 end;
@@ -177,7 +177,7 @@ begin
   inherited;
 end;
 
-function TLogger.Exception(const pException: Exception): ILogger;
+function TLogger.Exception(pException: Exception): ILogger;
 begin
   FException := pException;
   Result := Self;

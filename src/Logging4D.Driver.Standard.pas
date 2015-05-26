@@ -8,8 +8,19 @@ uses
 type
 
   TStdLoggingFactory = class sealed
+  strict private
+  const
+    CanNotBeInstantiatedException = 'This class can not be instantiated!';
+  strict private
+
+    {$HINTS OFF}
+
+    constructor Create;
+
+    {$HINTS ON}
+
   public
-    class function Build(const pAppender: TLoggerAppender): ILogging; static;
+    class function Build(pAppender: TLoggerAppender): ILogging; static;
   end;
 
 implementation
@@ -25,21 +36,21 @@ type
   strict private
     FAppender: TLoggerAppender;
   strict protected
-    procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); override;
+    procedure DoLog(const pLevel: TLoggerLevel; pLogger: ILogger); override;
   public
-    constructor Create(const pAppender: TLoggerAppender);
+    constructor Create(pAppender: TLoggerAppender);
   end;
 
-{ TStdLoggingAdapter }
+  { TStdLoggingAdapter }
 
-constructor TStdLoggingAdapter.Create(const pAppender: TLoggerAppender);
+constructor TStdLoggingAdapter.Create(pAppender: TLoggerAppender);
 begin
   if not Assigned(pAppender) then
     raise ELoggerException.Create('Log Appender Undefined!');
   FAppender := pAppender;
 end;
 
-procedure TStdLoggingAdapter.DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger);
+procedure TStdLoggingAdapter.DoLog(const pLevel: TLoggerLevel; pLogger: ILogger);
 var
   vMsg: string;
   vKeywords: string;
@@ -70,9 +81,14 @@ end;
 
 { TStdLoggingFactory }
 
-class function TStdLoggingFactory.Build(const pAppender: TLoggerAppender): ILogging;
+class function TStdLoggingFactory.Build(pAppender: TLoggerAppender): ILogging;
 begin
   Result := TStdLoggingAdapter.Create(pAppender);
+end;
+
+constructor TStdLoggingFactory.Create;
+begin
+  raise ELoggerException.Create(CanNotBeInstantiatedException);
 end;
 
 end.

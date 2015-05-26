@@ -8,8 +8,19 @@ uses
 type
 
   TLog4DLoggingFactory = class sealed
+  strict private
+  const
+    CanNotBeInstantiatedException = 'This class can not be instantiated!';
+  strict private
+
+    {$HINTS OFF}
+
+    constructor Create;
+
+    {$HINTS ON}
+
   public
-    class function Build(const pIdentifier, pConfigFileName: string; const pAppender: TLoggerAppender = nil): ILogging; static;
+    class function Build(const pIdentifier, pConfigFileName: string; pAppender: TLoggerAppender = nil): ILogging; static;
   end;
 
 implementation
@@ -30,7 +41,7 @@ type
   protected
     procedure DoAppend(const Message: string); override;
   public
-    constructor Create(const pAppender: TLoggerAppender); reintroduce;
+    constructor Create(pAppender: TLoggerAppender); reintroduce;
     destructor Destroy; override;
   end;
 
@@ -38,9 +49,9 @@ type
   strict private
     FLogLogger: TLogLogger;
   protected
-    procedure DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger); override;
+    procedure DoLog(const pLevel: TLoggerLevel; pLogger: ILogger); override;
   public
-    constructor Create(const pIdentifier, pConfigFileName: string; const pAppender: TLoggerAppender = nil);
+    constructor Create(const pIdentifier, pConfigFileName: string; pAppender: TLoggerAppender = nil);
   end;
 
 procedure RegisterLog4DLevels();
@@ -62,7 +73,7 @@ end;
 
 { TLog4DAnonymousAppender }
 
-constructor TLog4DAnonymousAppender.Create(const pAppender: TLoggerAppender);
+constructor TLog4DAnonymousAppender.Create(pAppender: TLoggerAppender);
 begin
   inherited Create(EmptyStr);
   FAppender := pAppender;
@@ -83,7 +94,7 @@ end;
 { TLog4DLoggingAdapter }
 
 constructor TLog4DLoggingAdapter.Create(const pIdentifier, pConfigFileName: string;
-  const pAppender: TLoggerAppender);
+  pAppender: TLoggerAppender);
 begin
   if pIdentifier.IsEmpty then
     raise ELoggerException.Create('Log Identifier Undefined!');
@@ -101,7 +112,7 @@ begin
     FLogLogger.AddAppender(TLog4DAnonymousAppender.Create(pAppender));
 end;
 
-procedure TLog4DLoggingAdapter.DoLog(const pLevel: TLoggerLevel; const pLogger: ILogger);
+procedure TLog4DLoggingAdapter.DoLog(const pLevel: TLoggerLevel; pLogger: ILogger);
 var
   vMsg: string;
   vKeywords: string;
@@ -131,9 +142,14 @@ end;
 { TLog4DLoggingFactory }
 
 class function TLog4DLoggingFactory.Build(const pIdentifier, pConfigFileName: string;
-  const pAppender: TLoggerAppender): ILogging;
+  pAppender: TLoggerAppender): ILogging;
 begin
   Result := TLog4DLoggingAdapter.Create(pIdentifier, pConfigFileName, pAppender);
+end;
+
+constructor TLog4DLoggingFactory.Create;
+begin
+  raise ELoggerException.Create(CanNotBeInstantiatedException);
 end;
 
 initialization
