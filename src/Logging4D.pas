@@ -65,7 +65,18 @@ type
     procedure Log(const pLevel: TLoggerLevel; const pLogMsg: string); overload;
   end;
 
-  TLoggerUtil = class
+  LoggerHelpful = class
+  strict private
+  const
+    CanNotBeInstantiatedException = 'This class can not be instantiated!';
+  strict private
+
+    {$HINTS OFF}
+
+    constructor Create;
+
+    {$HINTS ON}
+
   public
     class function KeywordsToString(const pKeywords: TLoggerKeywords): string; static;
   end;
@@ -232,9 +243,14 @@ begin
   Result := Self;
 end;
 
-{ TLoggerUtil }
+{ LoggerHelpful }
 
-class function TLoggerUtil.KeywordsToString(const pKeywords: TLoggerKeywords): string;
+constructor LoggerHelpful.Create;
+begin
+  raise ELoggerException.Create(CanNotBeInstantiatedException);
+end;
+
+class function LoggerHelpful.KeywordsToString(const pKeywords: TLoggerKeywords): string;
 var
   vStr: string;
 begin

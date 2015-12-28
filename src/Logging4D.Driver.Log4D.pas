@@ -120,7 +120,7 @@ begin
   inherited;
   vMsg := 'Log';
 
-  vKeywords := TLoggerUtil.KeywordsToString(pLogger.GetKeywords);
+  vKeywords := LoggerHelpful.KeywordsToString(pLogger.GetKeywords);
   if (vKeywords <> EmptyStr) then
     vMsg := vMsg + ' | Keywords:' + vKeywords;
 
