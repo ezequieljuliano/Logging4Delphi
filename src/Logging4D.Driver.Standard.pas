@@ -3,92 +3,67 @@ unit Logging4D.Driver.Standard;
 interface
 
 uses
-  Logging4D;
-
-type
-
-  TStdLoggingFactory = class sealed
-  strict private
-  const
-    CanNotBeInstantiatedException = 'This class can not be instantiated!';
-  strict private
-
-    {$HINTS OFF}
-
-    constructor Create;
-
-    {$HINTS ON}
-
-  public
-    class function Build(pAppender: TLoggerAppender): ILogging; static;
-  end;
-
-implementation
-
-uses
   System.SysUtils,
   System.TypInfo,
+  Logging4D,
   Logging4D.Driver.Base;
 
 type
 
-  TStdLoggingAdapter = class(TDriverLogging, ILogging)
-  strict private
-    FAppender: TLoggerAppender;
-  strict protected
-    procedure DoLog(const pLevel: TLoggerLevel; pLogger: ILogger); override;
+  TStandardLogging = class(TDriverLogging, ILogging)
+  private
+    fAppender: TLoggerAppender;
+  protected
+    procedure DoLog(logger: ILogger; level: TLoggerLevel); override;
   public
-    constructor Create(pAppender: TLoggerAppender);
+    constructor Create(appender: TLoggerAppender);
   end;
 
-  { TStdLoggingAdapter }
+implementation
 
-constructor TStdLoggingAdapter.Create(pAppender: TLoggerAppender);
+{ TStandardLogging }
+
+constructor TStandardLogging.Create(appender: TLoggerAppender);
 begin
-  if not Assigned(pAppender) then
-    raise ELoggerException.Create('Log Appender Undefined!');
-  FAppender := pAppender;
+  inherited Create;
+
+  if not Assigned(appender) then
+    raise ELoggerException.Create('Log Appender Undefined.');
+
+  fAppender := appender;
 end;
 
-procedure TStdLoggingAdapter.DoLog(const pLevel: TLoggerLevel; pLogger: ILogger);
+procedure TStandardLogging.DoLog(logger: ILogger; level: TLoggerLevel);
 var
-  vMsg: string;
-  vKeywords: string;
+  msg: string;
+  keywords: string;
+  i: Integer;
 begin
   inherited;
-  vMsg := 'Level:' + GetEnumName(TypeInfo(TLoggerLevel), Integer(pLevel));
+  msg := 'Level: ' + GetEnumName(TypeInfo(TLoggerLevel), Integer(level));
 
-  vKeywords := LoggerHelpful.KeywordsToString(pLogger.GetKeywords);
-  if (vKeywords <> EmptyStr) then
-    vMsg := vMsg + ' | Keywords:' + vKeywords;
+  keywords := '';
+  for i := Low(logger.GetKeywords) to High(logger.GetKeywords) do
+    keywords := keywords + logger.GetKeywords[i] + ';';
 
-  if (pLogger.GetOwner <> EmptyStr) then
-    vMsg := vMsg + ' | Owner:' + pLogger.GetOwner;
+  if not keywords.IsEmpty then
+    msg := msg + ' | Keywords: ' + keywords;
 
-  if (pLogger.GetMessage <> EmptyStr) then
-    vMsg := vMsg + ' | Message:' + pLogger.GetMessage;
+  if not logger.GetOwner.IsEmpty then
+    msg := msg + ' | Owner: ' + logger.GetOwner;
 
-  if (pLogger.GetMarker <> nil) and (pLogger.GetMarker.GetName <> EmptyStr) then
-    vMsg := vMsg + ' | Marker:' + pLogger.GetMarker.GetName;
+  if not logger.GetMessage.IsEmpty then
+    msg := msg + ' | Message: ' + logger.GetMessage;
 
-  if (pLogger.GetException <> nil) then
-    vMsg := vMsg + ' | Exception:' + pLogger.GetException.ToString;
+  if Assigned(logger.GetMarker) and not logger.GetMarker.GetName.IsEmpty then
+    msg := msg + ' | Marker: ' + logger.GetMarker.GetName;
 
-  vMsg := vMsg + sLineBreak;
+  if Assigned(logger.GetException) then
+    msg := msg + ' | Exception: ' + logger.GetException.ToString;
 
-  FAppender(vMsg);
-end;
+  msg := msg + sLineBreak;
 
-{ TStdLoggingFactory }
-
-class function TStdLoggingFactory.Build(pAppender: TLoggerAppender): ILogging;
-begin
-  Result := TStdLoggingAdapter.Create(pAppender);
-end;
-
-constructor TStdLoggingFactory.Create;
-begin
-  raise ELoggerException.Create(CanNotBeInstantiatedException);
+  FAppender(msg);
 end;
 
 end.

@@ -26,53 +26,69 @@ The Logging4Delphi requires Delphi XE or greater and to use this API will is ver
 
 Examples
 ===========
+	uses
+	  Logging4D,
+	  Logging4D.Impl,
+	  Logging4D.Driver.Standard;
 
     procedure LoggingWithStandardAdapter;
     var
-       vStdLogging: ILogging;
-       vStdAppender: TLoggerAppender;
-       vFileName: string;
-    begin
-       vFileName := ExtractFilePath(ParamStr(0)) + 'Log.txt';
-       vStdAppender := procedure(pArg: string)
-         var
-           vStrList: TStringList;
-         begin
-           vStrList := TStringList.Create;
-           try
-             if FileExists(vFileName) then
-               DeleteFile(vFileName);
-             vStrList.Add(pArg);
-             vStrList.SaveToFile(vFileName);
-           finally
-             FreeAndNil(vStrList);
-           end;
-         end;
-    
-       vStdLogging := TStdLoggingFactory.Build(vStdAppender);
+      logging: ILogging;
+      appender: TLoggerAppender;
+      fileName: string;
+	begin
+	  inherited;
+	  fileName := ExtractFilePath(ParamStr(0)) + 'Log.txt';
+	
+	  appender := procedure(msg: string)
+	    var
+	      strList: TStringList;
+	    begin
+	      strList := TStringList.Create;
+	      try
+	        if FileExists(fileName) then
+	          DeleteFile(fileName);
+	
+	        strList.Add(msg);
+	
+	        strList.SaveToFile(fileName);
+	      finally
+	        strList.Free;
+	      end;
+	    end;
+	
+	  logging := TStandardLogging.Create(appender);
+
        //Using Logger
-       vStdLogging.Fatal(NewLogger
-          .Keywords(TLoggerKeywords.Create('Test'))
-          .Owner('Program')
-          .Message('Fatal Test')
-          .Marker('Marker Test'));
+       logging.Fatal(
+      	TLogger.New
+      	  .Keywords(['REST'])
+      	  .Owner('AppOne')
+          .Message('Fatal REST Request Error')
+          .Marker('Delphi')
+        );
+
        //Using String Message
-       vStdLogging.Info('Info Test');
-    end;
+       logging.Fatal('Fatal REST Request Error');
+	end;
 
     procedure LoggingWithLog4DAdapter;
     var
-       vLogging: ILogging;
+       logging: ILogging;
     begin
-       vLogging := TLog4DLoggingFactory.Build('Log4D', 'log4d.props');
-       //Using Logger
-       vLogging.Fatal(NewLogger
-          .Keywords(TLoggerKeywords.Create('Test'))
-          .Owner('Program')
-          .Message('Fatal Test')
-          .Marker('Marker Test'));
+       logging := TLog4DLogging.Create('Log4D', fileName);
+       
+      //Using Logger
+       logging.Fatal(
+      	TLogger.New
+      	  .Keywords(['REST'])
+      	  .Owner('AppOne')
+          .Message('Fatal REST Request Error')
+          .Marker('Delphi')
+        );
+
        //Using String Message
-       vLogging.Info('Info Test');
+       logging.Fatal('Fatal REST Request Error');
     end;
     
 **Analyze the unit tests they will assist you.**

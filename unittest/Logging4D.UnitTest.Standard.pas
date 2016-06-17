@@ -8,151 +8,152 @@ uses
   System.SysUtils,
   System.TypInfo,
   Logging4D,
+  Logging4D.Impl,
   Logging4D.Driver.Standard;
 
 type
 
-  TTestLogging4DStd = class(TTestCase)
+  TTestLogging4DStandard = class(TTestCase)
   private
-    FFileName: string;
-    FStdLogging: ILogging;
-    FAppender: TLoggerAppender;
+    fFileName: string;
+    fLogging: ILogging;
+    fAppender: TLoggerAppender;
   protected
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestStd();
+    procedure TestStandard;
   end;
 
 implementation
 
-{ TTestLogging4DStd }
+{ TTestLogging4DStandard }
 
-procedure TTestLogging4DStd.SetUp;
+procedure TTestLogging4DStandard.SetUp;
 begin
   inherited;
-  FFileName := ExtractFilePath(ParamStr(0)) + 'Log.txt';
+  fFileName := ExtractFilePath(ParamStr(0)) + 'Log.txt';
 
-  FAppender := procedure(pArg: string)
+  fAppender := procedure(msg: string)
     var
-      vStrList: TStringList;
+      strList: TStringList;
     begin
-      vStrList := TStringList.Create;
+      strList := TStringList.Create;
       try
-        if FileExists(FFileName) then
-          DeleteFile(FFileName);
+        if FileExists(fFileName) then
+          DeleteFile(fFileName);
 
-        vStrList.Add(pArg);
+        strList.Add(msg);
 
-        vStrList.SaveToFile(FFileName);
+        strList.SaveToFile(fFileName);
       finally
-        FreeAndNil(vStrList);
+        FreeAndNil(strList);
       end;
     end;
 
-  FStdLogging := TStdLoggingFactory.Build(FAppender);
+  fLogging := TStandardLogging.Create(fAppender);
 end;
 
-procedure TTestLogging4DStd.TearDown;
+procedure TTestLogging4DStandard.TearDown;
 begin
   inherited;
 
 end;
 
-procedure TTestLogging4DStd.TestStd;
+procedure TTestLogging4DStandard.TestStandard;
 const
-  cFatal = 'Level:Fatal | Keywords:Test1; | Owner:Ezequiel1 | Message:Fatal Test | Marker:Delphi';
-  cError = 'Level:Error | Keywords:Test2; | Owner:Ezequiel2 | Message:Error Test | Marker:Delphi';
-  cWarn = 'Level:Warn | Keywords:Test3; | Owner:Ezequiel3 | Message:Warn Test | Marker:Delphi';
-  cInfo = 'Level:Info | Keywords:Test4; | Owner:Ezequiel4 | Message:Info Test | Marker:Delphi';
-  cDebug = 'Level:Debug | Keywords:Test5; | Owner:Ezequiel5 | Message:Debug Test | Marker:Delphi';
-  cTrace = 'Level:Trace | Keywords:Test6; | Owner:Ezequiel6 | Message:Trace Test | Marker:Delphi';
-  cTraceEx = 'Level:Trace | Keywords:Test6; | Owner:Ezequiel6 | Message:Trace Test | Marker:Delphi | Exception:Ex';
+  FATAL_MSG = 'Level: Fatal | Keywords: Test1; | Owner: Ezequiel1 | Message: Fatal Test | Marker: Delphi';
+  ERROR_MSG = 'Level: Error | Keywords: Test2; | Owner: Ezequiel2 | Message: Error Test | Marker: Delphi';
+  WARN_MSG = 'Level: Warn | Keywords: Test3; | Owner: Ezequiel3 | Message: Warn Test | Marker: Delphi';
+  INFO_MSG = 'Level: Info | Keywords: Test4; | Owner: Ezequiel4 | Message: Info Test | Marker: Delphi';
+  DEBUG_MSG = 'Level: Debug | Keywords: Test5; | Owner: Ezequiel5 | Message: Debug Test | Marker: Delphi';
+  TRACE_MSG = 'Level: Trace | Keywords: Test6; | Owner: Ezequiel6 | Message: Trace Test | Marker: Delphi';
+  TRACE_EX_MSG = 'Level: Trace | Keywords: Test6; | Owner: Ezequiel6 | Message: Trace Test | Marker: Delphi | Exception: Ex';
 var
-  vStrList: TStringList;
-  vEx: Exception;
+  strList: TStringList;
+  ex: Exception;
 begin
-  vStrList := TStringList.Create;
+  strList := TStringList.Create;
   try
-    FStdLogging.Fatal(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test1'))
+    fLogging.Fatal(
+      TLogger.New
+      .Keywords(['Test1'])
       .Owner('Ezequiel1')
       .Message('Fatal Test')
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cFatal, vStrList[0]);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(FATAL_MSG, strList[0]);
 
-    FStdLogging.Error(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test2'))
+    fLogging.Error(
+      TLogger.New
+      .Keywords(['Test2'])
       .Owner('Ezequiel2')
       .Message('Error Test')
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cError, vStrList[0]);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(ERROR_MSG, strList[0]);
 
-    FStdLogging.Warn(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test3'))
+    fLogging.Warn(
+      TLogger.New
+      .Keywords(['Test3'])
       .Owner('Ezequiel3')
       .Message('Warn Test')
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cWarn, vStrList[0]);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(WARN_MSG, strList[0]);
 
-    FStdLogging.Info(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test4'))
+    fLogging.Info(
+      TLogger.New
+      .Keywords(['Test4'])
       .Owner('Ezequiel4')
       .Message('Info Test')
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cInfo, vStrList[0]);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(INFO_MSG, strList[0]);
 
-    FStdLogging.Debug(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test5'))
+    fLogging.Debug(
+      TLogger.New
+      .Keywords(['Test5'])
       .Owner('Ezequiel5')
       .Message('Debug Test')
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cDebug, vStrList[0]);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(DEBUG_MSG, strList[0]);
 
-    FStdLogging.Trace(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test6'))
+    fLogging.Trace(
+      TLogger.New
+      .Keywords(['Test6'])
       .Owner('Ezequiel6')
       .Message('Trace Test')
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cTrace, vStrList[0]);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(TRACE_MSG, strList[0]);
 
-    vEx := Exception.Create('Ex');
-    FStdLogging.Trace(
-      NewLogger
-      .Keywords(TLoggerKeywords.Create('Test6'))
+    ex := Exception.Create('Ex');
+    fLogging.Trace(
+      TLogger.New
+      .Keywords(['Test6'])
       .Owner('Ezequiel6')
       .Message('Trace Test')
-      .Exception(vEx)
+      .Exception(ex)
       .Marker('Delphi')
       );
-    vStrList.LoadFromFile(FFileName);
-    CheckEqualsString(cTraceEx, vStrList[0]);
-    FreeAndNil(vEx);
+    strList.LoadFromFile(fFileName);
+    CheckEqualsString(TRACE_EX_MSG, strList[0]);
+    FreeAndNil(ex);
   finally
-    FreeAndNil(vStrList);
+    FreeAndNil(strList);
   end;
 end;
 
 initialization
 
-RegisterTest(TTestLogging4DStd.Suite);
+RegisterTest(TTestLogging4DStandard.Suite);
 
 end.

@@ -8,26 +8,27 @@ uses
   System.SysUtils,
   System.TypInfo,
   Logging4D,
+  Logging4D.Impl,
   Logging4D.Driver.Log4D;
 
 type
 
   TTestLogging4DLog4D = class(TTestCase)
   private
-    FLog4DLogging: ILogging;
+    fLogging: ILogging;
   protected
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestLog4D();
+    procedure TestLog4D;
   end;
 
 implementation
 
 const
-  _cLog4DPropsFileName = 'log4d.props';
+  LOG4D_PROPS_FILE_NAME = 'log4d.props';
 
-  _cLog4DPropsFileText = 'log4d.debug=TRUE' + sLineBreak +
+  LOG4D_PROPS_FILE_BODY = 'log4d.debug=TRUE' + sLineBreak +
     'log4d.loggerFactory=TLogDefaultLoggerFactory' + sLineBreak +
     'log4d.rootLogger=ALL,ROOT' + sLineBreak + sLineBreak +
     'log4d.appender.ROOT=TLogRollingFileAppender' + sLineBreak +
@@ -44,24 +45,24 @@ const
 
 procedure TTestLogging4DLog4D.SetUp;
 var
-  vLog4DFilePathPropsName: string;
-  vStrList: TStringList;
+  fileName: string;
+  strList: TStringList;
 begin
   inherited;
-  vLog4DFilePathPropsName := ExtractFilePath(ParamStr(0)) + _cLog4DPropsFileName;
+  fileName := ExtractFilePath(ParamStr(0)) + LOG4D_PROPS_FILE_NAME;
 
-  if FileExists(vLog4DFilePathPropsName) then
-    DeleteFile(vLog4DFilePathPropsName);
+  if FileExists(fileName) then
+    DeleteFile(fileName);
 
-  vStrList := TStringList.Create;
+  strList := TStringList.Create;
   try
-    vStrList.Text := _cLog4DPropsFileText;
-    vStrList.SaveToFile(vLog4DFilePathPropsName);
+    strList.Text := LOG4D_PROPS_FILE_BODY;
+    strList.SaveToFile(fileName);
   finally
-    vStrList.Free;
+    strList.Free;
   end;
 
-  FLog4DLogging := TLog4DLoggingFactory.Build('Log4D', vLog4DFilePathPropsName);
+  fLogging := TLog4DLogging.Create('Log4D', fileName);
 end;
 
 procedure TTestLogging4DLog4D.TearDown;
@@ -72,74 +73,74 @@ end;
 
 procedure TTestLogging4DLog4D.TestLog4D;
 var
-  vLogFilePathName: string;
-  vEx: Exception;
+  fileName: string;
+  ex: Exception;
 begin
-  vLogFilePathName := ExtractFilePath(ParamStr(0)) + 'Log_Log4D.txt';
+  fileName := ExtractFilePath(ParamStr(0)) + 'Log_Log4D.txt';
 
-  if FileExists(vLogFilePathName) then
-    DeleteFile(vLogFilePathName);
+  if FileExists(fileName) then
+    DeleteFile(fileName);
 
-  FLog4DLogging.Fatal(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test1'))
+  fLogging.Fatal(
+    TLogger.New
+    .Keywords(['Test1'])
     .Owner('Ezequiel1')
     .Message('Fatal Test')
     .Marker('Delphi')
     );
 
-  FLog4DLogging.Error(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test2'))
+  fLogging.Error(
+    TLogger.New
+    .Keywords(['Test2'])
     .Owner('Ezequiel2')
     .Message('Error Test')
     .Marker('Delphi')
     );
 
-  FLog4DLogging.Warn(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test3'))
+  fLogging.Warn(
+    TLogger.New
+    .Keywords(['Test3'])
     .Owner('Ezequiel3')
     .Message('Warn Test')
     .Marker('Delphi')
     );
 
-  FLog4DLogging.Info(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test4'))
+  fLogging.Info(
+    TLogger.New
+    .Keywords(['Test4'])
     .Owner('Ezequiel4')
     .Message('Info Test')
     .Marker('Delphi')
     );
 
-  FLog4DLogging.Debug(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test5'))
+  fLogging.Debug(
+    TLogger.New
+    .Keywords(['Test5'])
     .Owner('Ezequiel5')
     .Message('Debug Test')
     .Marker('Delphi')
     );
 
-  FLog4DLogging.Trace(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test6'))
+  fLogging.Trace(
+    TLogger.New
+    .Keywords(['Test6'])
     .Owner('Ezequiel6')
     .Message('Trace Test')
     .Marker('Delphi')
     );
 
-  vEx := Exception.Create('Ex');
-  FLog4DLogging.Trace(
-    NewLogger
-    .Keywords(TLoggerKeywords.Create('Test6'))
+  ex := Exception.Create('Ex');
+  fLogging.Trace(
+    TLogger.New
+    .Keywords(['Test6'])
     .Owner('Ezequiel6')
     .Message('Trace Test')
-    .Exception(vEx)
+    .Exception(ex)
     .Marker('Delphi')
     );
-  FreeAndNil(vEx);
+  FreeAndNil(ex);
 
-  CheckTrue(FileExists(vLogFilePathName));
+  CheckTrue(FileExists(fileName));
 end;
 
 initialization
