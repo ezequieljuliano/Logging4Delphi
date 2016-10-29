@@ -97,7 +97,11 @@ end;
 constructor TLogger.Create;
 begin
   inherited Create;
-  fKeywords := nil;//TESTE
+  {$IFDEF VER210}
+  fKeywords := nil;
+  {$ELSE}
+  fKeywords := [];
+  {$ENDIF}
   fOwner := '';
   fMessage := '';
   fException := nil;
