@@ -3,7 +3,11 @@ unit Logging4D.Impl;
 interface
 
 uses
+  {$IFDEF VER210}
+  SysUtils,
+  {$ELSE}
   System.SysUtils,
+  {$ENDIF}
   Logging4D;
 
 type
@@ -93,7 +97,7 @@ end;
 constructor TLogger.Create;
 begin
   inherited Create;
-  fKeywords := [];
+  fKeywords := nil;//TESTE
   fOwner := '';
   fMessage := '';
   fException := nil;

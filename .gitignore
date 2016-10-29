@@ -5,3 +5,6 @@
 /unittest/*.dsk
 /unittest/*.skincfg
 /unittest/*.~dsk
+/dependencies/Log4D/*.dcu
+/dependencies/Log4D/__history
+/src/*.dcu

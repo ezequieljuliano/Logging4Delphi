@@ -3,7 +3,11 @@ unit Logging4D;
 interface
 
 uses
+  {$IFDEF VER210}
+  SysUtils;
+  {$ELSE}
   System.SysUtils;
+  {$ENDIF}
 
 type
 

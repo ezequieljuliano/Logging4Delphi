@@ -1063,7 +1063,11 @@ implementation
 
 {$IFDEF UNICODE}
 uses
+  {$IFDEF VER210}
+  Consts;
+  {$ELSE}
   Vcl.Consts;
+  {$ENDIF}
 {$ENDIF UNICODE}
 
 const
@@ -2201,6 +2205,8 @@ end;
 
 { Initialisation - date format is a standard option. }
 procedure TLogCustomLayout.Init;
+var
+  FormatSettings : TFormatSettings;
 begin
   inherited Init;
   SetOption(DateFormatOpt, {$IF CompilerVersion >= 20}FormatSettings.{$IFEND}ShortDateFormat);
