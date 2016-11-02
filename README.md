@@ -19,7 +19,7 @@ The Logging4Delphi makes use of some external dependencies. Therefore these depe
 Using Logging4Delphi
 ====================
 
-The Logging4Delphi requires Delphi XE or greater and to use this API will is very simple, you simply add the Search Path of your IDE or your project the following directories:
+The Logging4Delphi requires Delphi 2010 or greater and to use this API will is very simple, you simply add the Search Path of your IDE or your project the following directories:
 
 - Logging4Delphi\src
 - Logging4Delphi\dependencies\Log4D

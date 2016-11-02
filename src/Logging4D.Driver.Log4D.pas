@@ -3,7 +3,11 @@ unit Logging4D.Driver.Log4D;
 interface
 
 uses
+  {$IFDEF VER210}
+  SysUtils,
+  {$ELSE}
   System.SysUtils,
+  {$ENDIF}
   Logging4D,
   Logging4D.Driver.Base,
   Log4D;
@@ -16,7 +20,11 @@ type
   protected
     procedure DoLog(logger: ILogger; level: TLoggerLevel); override;
   public
+  {$IFDEF VER210}
+    constructor Create(const id, configFileName: string; appender: TLoggerAppender);
+  {$ELSE}
     constructor Create(const id, configFileName: string; appender: TLoggerAppender = nil);
+  {$ENDIF}
   end;
 
 implementation
@@ -40,10 +48,18 @@ type
 constructor TLog4DLogging.Create(const id, configFileName: string; appender: TLoggerAppender);
 begin
   inherited Create;
+  {$IFDEF VER210}
+  if (id = '') then
+  {$ELSE}
   if id.IsEmpty then
+  {$ENDIF}
     raise ELoggerException.Create('Log Identifier Undefined.');
 
+  {$IFDEF VER210}
+  if (configFileName = '') then
+  {$ELSE}
   if configFileName.IsEmpty then
+  {$ENDIF}
     raise ELoggerException.Create('Log Configuration File Name Undefined.');
 
   DefaultHierarchy.ResetConfiguration;
@@ -69,16 +85,32 @@ begin
   for i := Low(logger.GetKeywords) to High(logger.GetKeywords) do
     keywords := keywords + logger.GetKeywords[i] + ';';
 
+  {$IFDEF VER210}
+  if not(keywords = '') then
+  {$ELSE}
   if not keywords.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Keywords:' + keywords;
 
+  {$IFDEF VER210}
+  if not(logger.GetOwner = '') then
+  {$ELSE}
   if not logger.GetOwner.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Owner: ' + logger.GetOwner;
 
+  {$IFDEF VER210}
+  if not(logger.GetMessage = '') then
+  {$ELSE}
   if not logger.GetMessage.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Message: ' + logger.GetMessage;
 
+  {$IFDEF VER210}
+  if Assigned(logger.GetMarker) and not(logger.GetMarker.GetName = '') then
+  {$ELSE}
   if Assigned(logger.GetMarker) and not logger.GetMarker.GetName.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Marker: ' + logger.GetMarker.GetName;
 
   if Assigned(logger.GetException) then

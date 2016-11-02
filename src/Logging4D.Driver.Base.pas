@@ -3,7 +3,11 @@ unit Logging4D.Driver.Base;
 interface
 
 uses
+  {$IFDEF VER210}
+  SysUtils,
+  {$ELSE}
   System.SysUtils,
+  {$ENDIF}
   Logging4D,
   Logging4D.Impl;
 

@@ -3,8 +3,14 @@ unit Logging4D.Driver.Standard;
 interface
 
 uses
+  {$IFDEF VER210}
+  SysUtils,
+  TypInfo,
+  {$ELSE}
   System.SysUtils,
   System.TypInfo,
+  {$ENDIF}
+
   Logging4D,
   Logging4D.Driver.Base;
 
@@ -46,16 +52,32 @@ begin
   for i := Low(logger.GetKeywords) to High(logger.GetKeywords) do
     keywords := keywords + logger.GetKeywords[i] + ';';
 
+  {$IFDEF VER210}
+  if not(keywords = '') then
+  {$ELSE}
   if not keywords.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Keywords: ' + keywords;
 
+  {$IFDEF VER210}
+  if not(logger.GetOwner = '') then
+  {$ELSE}
   if not logger.GetOwner.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Owner: ' + logger.GetOwner;
 
+  {$IFDEF VER210}
+  if not(logger.GetMessage = '') then
+  {$ELSE}
   if not logger.GetMessage.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Message: ' + logger.GetMessage;
 
+  {$IFDEF VER210}
+  if Assigned(logger.GetMarker) and not(logger.GetMarker.GetName = '') then
+  {$ELSE}
   if Assigned(logger.GetMarker) and not logger.GetMarker.GetName.IsEmpty then
+  {$ENDIF}
     msg := msg + ' | Marker: ' + logger.GetMarker.GetName;
 
   if Assigned(logger.GetException) then
